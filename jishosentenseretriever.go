@@ -20,13 +20,13 @@ func (this JishoSentenseRetreiver) buildJapaneseAndReadingStrings(japaneseSenten
 		readingString += elementText
 		furigana := element.Find("span", "class", "furigana")
 		if furigana.Error == nil {
-			readingString += " [" + furigana.Text() + "] "
+			readingString += "「" + furigana.Text() + "」"
 		}
 	}
 	return japanseString, readingString
 }
 
-func (this JishoSentenseRetreiver) GetSentencesforKanji(kanji string) []Sentence {
+func (this JishoSentenseRetreiver) GetSentencesforKanji(kanji string, maxSentences int) []Sentence {
 	var sentences []Sentence
 	url := fmt.Sprintf("https://jisho.org/search/%s %%23sentences", kanji)
 	print(url)
