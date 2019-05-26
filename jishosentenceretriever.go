@@ -7,10 +7,10 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
-type JishoSentenseRetreiver struct {
+type JishoSentenceRetreiver struct {
 }
 
-func (this JishoSentenseRetreiver) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (string, string) {
+func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (string, string) {
 	var japanseString string
 	var readingString string
 	elements := japaneseSentence.FindAll("li")
@@ -26,7 +26,7 @@ func (this JishoSentenseRetreiver) buildJapaneseAndReadingStrings(japaneseSenten
 	return japanseString, readingString
 }
 
-func (this JishoSentenseRetreiver) GetSentencesforKanji(kanji string, maxSentences int) []Sentence {
+func (this JishoSentenceRetreiver) GetSentencesforKanji(kanji string, maxSentences int) []Sentence {
 	var sentences []Sentence
 	url := fmt.Sprintf("https://jisho.org/search/%s %%23sentences", kanji)
 	print(url)
