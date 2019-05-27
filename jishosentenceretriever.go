@@ -26,7 +26,7 @@ func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSenten
 	return japanseString, readingString
 }
 
-func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Root, sentences *[]Sentence, maxSentences int) {
+func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Root, sentences *[]Translation, maxSentences int) {
 	for _, sentence := range foundSentences {
 		if len(*sentences) >= maxSentences {
 			break
@@ -34,7 +34,7 @@ func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Ro
 		japaneseSentence := sentence.Find("ul", "class", "japanese_sentence")
 		japanseString, readingString := this.buildJapaneseAndReadingStrings(japaneseSentence)
 		englishSentence := sentence.Find("div", "class", "english_sentence").Find("span", "class", "english")
-		*sentences = append(*sentences, Sentence{
+		*sentences = append(*sentences, Translation{
 			Japanese: japanseString,
 			English:  englishSentence.Text(),
 			Reading:  readingString,
@@ -42,8 +42,8 @@ func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Ro
 	}
 }
 
-func (this JishoSentenceRetreiver) GetSentencesforKanji(kanji string, maxSentences int) []Sentence {
-	var sentences []Sentence
+func (this JishoSentenceRetreiver) GetSentencesforKanji(kanji string, maxSentences int) []Translation {
+	var sentences []Translation
 	for pageNumber := 1; len(sentences) < maxSentences; pageNumber++ {
 		url := fmt.Sprintf("https://jisho.org/search/%s %%23sentences?page=%d", kanji, pageNumber)
 		log.Println("Looking for sentences on " + url)

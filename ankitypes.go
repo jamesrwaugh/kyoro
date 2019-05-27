@@ -9,15 +9,19 @@ type AnkiCard struct {
 }
 
 // Sentence has enough information to describe a sentence
-type Sentence struct {
+type Translation struct {
 	Japanese string
 	Reading  string
 	English  string
 }
 
+type MeaningRetriever interface {
+	GetMeaningforKanji(kanji string) Translation
+}
+
 // SentenceRetriever gets sentences from an outside source for a kanji
 type SentenceRetriever interface {
-	GetSentencesforKanji(kanji string, maxSentences int) []Sentence
+	GetSentencesforKanji(kanji string, maxSentences int) []Translation
 }
 
 // AnkiService should add a given card to Anki.
