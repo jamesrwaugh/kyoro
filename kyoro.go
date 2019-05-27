@@ -7,15 +7,17 @@ type KyoroProduction struct {
 
 func (this KyoroProduction) makeAnkiCard(options Options, sentence Sentence) AnkiCard {
 	// TODO: Sentence-front is not supported.
-	// TODO: Monolingual is not supported
+	cardFields := map[string]string{
+		"japanese": sentence.Japanese,
+		"reading":  sentence.Reading,
+	}
+	if !options.MonoligualMode {
+		cardFields["english"] = sentence.English
+	}
 	return AnkiCard{
 		DeckName:  options.DeckName,
 		ModelName: options.ModelName,
-		Fields: map[string]string{
-			"japanese": sentence.Japanese,
-			"english":  sentence.English,
-			"reading":  sentence.Reading,
-		},
+		Fields:    cardFields,
 		Tags: []string{
 			"kyoro",
 		},
