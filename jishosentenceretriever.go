@@ -10,20 +10,20 @@ import (
 type JishoSentenceRetreiver struct {
 }
 
-func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (string, string) {
-	var japanseString string
-	var readingString string
+func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (japanese string, reading string, kaniReadings []string) {
 	elements := japaneseSentence.FindAll("li")
 	for _, element := range elements {
 		elementText := element.Find("span", "class", "unlinked").Text()
-		japanseString += elementText
-		readingString += elementText
+		japanese += elementText
+		reading += elementText
 		furigana := element.Find("span", "class", "furigana")
 		if furigana.Error == nil {
-			readingString += "「" + furigana.Text() + "」"
+			quotedFurigana := "「" + furigana.Text() + "」"
+			reading += quotedFurigana
+			kaniReadings = append(kaniReadings, elementText+quotedFurigana)
 		}
 	}
-	return japanseString, readingString
+	return
 }
 
 func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Root, sentences *[]Translation, maxSentences int) {
@@ -32,12 +32,13 @@ func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Ro
 			break
 		}
 		japaneseSentence := sentence.Find("ul", "class", "japanese_sentence")
-		japanseString, readingString := this.buildJapaneseAndReadingStrings(japaneseSentence)
+		japanseString, readingString, kaniReadings := this.buildJapaneseAndReadingStrings(japaneseSentence)
 		englishSentence := sentence.Find("div", "class", "english_sentence").Find("span", "class", "english")
 		*sentences = append(*sentences, Translation{
-			Japanese: japanseString,
-			English:  englishSentence.Text(),
-			Reading:  readingString,
+			Japanese:      japanseString,
+			English:       englishSentence.Text(),
+			Reading:       readingString,
+			KanjiReadings: kaniReadings,
 		})
 	}
 }

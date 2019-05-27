@@ -39,7 +39,7 @@ func (this WWWJdicMeaningRetriever) parseDictionaryEntries(word string, entries 
 		if len(matches) < 5 || matches[1] != word {
 			continue
 		}
-		log.Println("WWWJDIC: Found match for \"", word, "\" in ", entry)
+		log.Println("WWWJDIC: Found match for \"", word, "\" as ", entry)
 		return Translation{
 			Japanese: matches[1],
 			Reading:  matches[2],

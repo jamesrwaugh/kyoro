@@ -10,9 +10,10 @@ type AnkiCard struct {
 
 // Sentence has enough information to describe a sentence
 type Translation struct {
-	Japanese string
-	Reading  string
-	English  string
+	Japanese      string
+	Reading       string
+	KanjiReadings []string
+	English       string
 }
 
 type MeaningRetriever interface {
