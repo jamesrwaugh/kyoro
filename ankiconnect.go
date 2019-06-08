@@ -27,7 +27,7 @@ func (this AnkiConnect) responseHasError(resp *http.Response, err error) bool {
 	var ankiConnectResponse map[string]interface{}
 	json.Unmarshal(bodyBytes, &ankiConnectResponse)
 	if errorString, ok := ankiConnectResponse["error"].(string); ok {
-		log.Fatal("Recieved AnkiConnect error: ", errorString)
+		log.Println("Recieved AnkiConnect error: ", errorString)
 		return true
 	}
 	return false
