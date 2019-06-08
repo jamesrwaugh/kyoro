@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type AnkiConnect struct {
@@ -65,7 +66,14 @@ func (this AnkiConnect) AddCard(card AnkiCard) bool {
 	log.Println(string(requestString))
 
 	resp, err := http.Post(this.GetEndpoint(), "application/json", bytes.NewBuffer(requestString))
+	if err != nil {
+		return false
+	}
 	defer resp.Body.Close()
+
+	// It seems adding cards too quickly results in strange issues.
+	// Make sure that doesn't happen here.
+	time.Sleep(500)
 
 	return !this.responseHasError(resp, err)
 }
