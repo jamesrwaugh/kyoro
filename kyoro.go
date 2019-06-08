@@ -2,16 +2,20 @@ package kyoro
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
+	"strings"
 )
 
 type KyoroProduction struct {
 }
 
 func (this KyoroProduction) makeSentenceAnkiCard(sentence Translation, options Options) AnkiCard {
+	boldInputPhrase := fmt.Sprintf("<b>%s</b>", options.InputPhrase)
+	boldJapanese := strings.Replace(sentence.Japanese, options.InputPhrase, boldInputPhrase, -1)
 	cardFields := map[string]string{
-		"japanese": sentence.Japanese,
+		"japanese": boldJapanese,
 		"reading":  sentence.Reading,
 	}
 	if !options.MonoligualMode {
