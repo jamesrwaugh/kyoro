@@ -46,7 +46,7 @@ func TestGetMeaningforKanji(t *testing.T) {
 		japaneseText    string
 		japaneseReading string
 	}{
-		{"先生", "(hon) boy (chi: xiānshēng)/", "先生", "シーサン"}, // This isn't right. Fix it.
+		{"先生", "(hon) boy (chi: xiānshēng)", "先生", "シーサン"}, // This isn't right. Fix it.
 		{"なし", "", "", ""},
 		{"ない", "", "", ""},
 	}

@@ -39,7 +39,7 @@ func (this JdictMeaningRetriever) getJDicResults(word string) []string {
 }
 
 func (this JdictMeaningRetriever) parseDictionaryEntries(word string, entries []string) Translation {
-	r, _ := regexp.Compile("(.*) \\[(.*)\\] ?\\/\\((.*?)\\) ?(.*)")
+	r, _ := regexp.Compile("(.*) \\[(.*)\\] ?\\/\\((.*?)\\) ?(.*)\\/")
 	for _, entry := range entries {
 		matches := r.FindStringSubmatch(entry)
 		if len(matches) < 5 || matches[1] != word {
