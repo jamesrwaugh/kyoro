@@ -9,16 +9,16 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
-func NewWWWJdicMeaningRetriever(c *ResourceClient) *WWWJdicMeaningRetriever {
-	r := WWWJdicMeaningRetriever{*c}
+func NewJdictMeaningRetriever(c *ResourceClient) *JdictMeaningRetriever {
+	r := JdictMeaningRetriever{*c}
 	return &r
 }
 
-type WWWJdicMeaningRetriever struct {
+type JdictMeaningRetriever struct {
 	client ResourceClient
 }
 
-func (this WWWJdicMeaningRetriever) getJDicResults(word string) []string {
+func (this JdictMeaningRetriever) getJDicResults(word string) []string {
 	// URL query format from http://nihongo.monash.edu/wwwjdicinf.html#backdoor_tag:
 	// 	1: Dictionary type: Dictionary to use, EDICT
 	// 	Z: Return format:   Backdoor entry, raw data only
@@ -38,7 +38,7 @@ func (this WWWJdicMeaningRetriever) getJDicResults(word string) []string {
 	return resultLines
 }
 
-func (this WWWJdicMeaningRetriever) parseDictionaryEntries(word string, entries []string) Translation {
+func (this JdictMeaningRetriever) parseDictionaryEntries(word string, entries []string) Translation {
 	r, _ := regexp.Compile("(.*) \\[(.*)\\] ?\\/\\((.*?)\\) ?(.*)")
 	for _, entry := range entries {
 		matches := r.FindStringSubmatch(entry)
@@ -56,7 +56,7 @@ func (this WWWJdicMeaningRetriever) parseDictionaryEntries(word string, entries 
 	return Translation{}
 }
 
-func (this WWWJdicMeaningRetriever) GetMeaningforKanji(word string) Translation {
+func (this JdictMeaningRetriever) GetMeaningforKanji(word string) Translation {
 	dictionaryEntries := this.getJDicResults(word)
 	return this.parseDictionaryEntries(word, dictionaryEntries)
 }
