@@ -9,7 +9,13 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
+func NewWWWJdicMeaningRetriever(c *ResourceClient) *WWWJdicMeaningRetriever {
+	r := WWWJdicMeaningRetriever{*c}
+	return &r
+}
+
 type WWWJdicMeaningRetriever struct {
+	client ResourceClient
 }
 
 func (this WWWJdicMeaningRetriever) getJDicResults(word string) []string {
@@ -21,7 +27,7 @@ func (this WWWJdicMeaningRetriever) getJDicResults(word string) []string {
 	// The search query is appended to the end as URL-escapted UTF-8 in this case.
 	baseURL := "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ"
 	url := baseURL + url.QueryEscape(word)
-	html, _ := soup.Get(url)
+	html, _ := this.client.Get(url)
 	doc := soup.HTMLParse(html)
 	results := doc.Find("pre")
 	if results.Error != nil {
