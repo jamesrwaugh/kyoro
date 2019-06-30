@@ -9,8 +9,8 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
-func NewJdictMeaningRetriever(c *ResourceClient) *JdictMeaningRetriever {
-	r := JdictMeaningRetriever{*c}
+func NewJdictMeaningRetriever(c ResourceClient) *JdictMeaningRetriever {
+	r := JdictMeaningRetriever{c}
 	return &r
 }
 
@@ -31,7 +31,7 @@ func (this JdictMeaningRetriever) getJDicResults(word string) []string {
 	doc := soup.HTMLParse(html)
 	results := doc.Find("pre")
 	if results.Error != nil {
-		log.Fatal("Could not find WWWJDIC entries for \"", word, "\"")
+		log.Println("Could not find WWWJDIC entries for \"", word, "\"")
 		return []string{}
 	}
 	resultLines := strings.Split(results.Text(), "\n")
@@ -52,7 +52,7 @@ func (this JdictMeaningRetriever) parseDictionaryEntries(word string, entries []
 			English:  matches[4],
 		}
 	}
-	log.Fatal("Could not find a WWWJDIC entry for ", word)
+	log.Println("Could not find a WWWJDIC entry for ", word)
 	return Translation{}
 }
 
