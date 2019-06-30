@@ -15,10 +15,10 @@ var 先生テスト string = `
     <BODY>
         <br>&nbsp;
         <br>
-        <pre>
+		<pre>
+先生に就く [せんせいにつく] /(exp,v5k) to study under (a teacher)/
 先生 [シーサン] /(n) (hon) boy (chi: xiānshēng)/
 先生 [せんせい(P);せんじょう(ok)] /(n) (1) (hon) teacher/master/doctor/(suf) (2) (hon) with names of teachers, etc. as an honorific/(n) (3) (せんじょう only) (arch) (See 前生) previous existence/(P)/
-先生に就く [せんせいにつく] /(exp,v5k) to study under (a teacher)/
 先生の述 [せんせいのじゅつ] /(n) teachers statement (expounding)/
 先生方 [せんせいがた] /(n) doctors/teachers/
 </pre>
