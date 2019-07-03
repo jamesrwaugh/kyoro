@@ -6,7 +6,7 @@ type MockResourceClient struct {
 	mock.Mock
 }
 
-func (this MockResourceClient) Get(address string) (string, error) {
+func (this *MockResourceClient) Get(address string) (string, error) {
 	args := this.Called(address)
 	return args.String(0), nil
 }
