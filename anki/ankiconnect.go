@@ -11,12 +11,12 @@ import (
 )
 
 type AnkiConnect struct {
-	client   *http.Client
+	client   HttpClient
 	Hostname string
 	Port     int64
 }
 
-func NewAnkiConnect(client *http.Client, host string, port int64) AnkiService {
+func NewAnkiConnect(client HttpClient, host string, port int64) AnkiService {
 	a := &AnkiConnect{client, host, port}
 	return a
 }
@@ -44,7 +44,7 @@ func (this AnkiConnect) GetEndpoint() string {
 }
 
 func (this AnkiConnect) IsConnected() bool {
-	r, err := http.Get(this.GetEndpoint())
+	r, err := this.client.Get(this.GetEndpoint())
 	return (r.StatusCode == 200) && (err == nil)
 }
 
