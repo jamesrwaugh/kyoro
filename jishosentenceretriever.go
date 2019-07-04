@@ -3,6 +3,7 @@ package kyoro
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/anaskhan96/soup"
 )
@@ -17,16 +18,23 @@ type JishoSentenceRetreiver struct {
 }
 
 func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (japanese string, reading string, kaniReadings []string) {
-	elements := japaneseSentence.FindAll("li")
-	for _, element := range elements {
-		elementText := element.Find("span", "class", "unlinked").Text()
-		japanese += elementText
-		reading += elementText
-		furigana := element.Find("span", "class", "furigana")
-		if furigana.Error == nil {
-			quotedFurigana := "「" + furigana.Text() + "」"
-			reading += quotedFurigana
-			kaniReadings = append(kaniReadings, elementText+quotedFurigana)
+	for _, element := range japaneseSentence.Children() {
+		nodeValue := strings.TrimSpace(element.NodeValue)
+		if nodeValue == "li" {
+			elementText := element.Find("span", "class", "unlinked").Text()
+			japanese += elementText
+			reading += elementText
+			furigana := element.Find("span", "class", "furigana")
+			if furigana.Error == nil {
+				quotedFurigana := "「" + furigana.Text() + "」"
+				reading += quotedFurigana
+				kaniReadings = append(kaniReadings, elementText+quotedFurigana)
+			}
+		} else if len(nodeValue) > 0 {
+			// We expect to get punctuation here. jisho adds things like 、 and 。
+			// outside of <li> elements.
+			japanese += nodeValue
+			reading += nodeValue
 		}
 	}
 	return

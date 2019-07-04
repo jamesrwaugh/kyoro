@@ -117,8 +117,8 @@ func Test_GetSentencesforKanji_ParsesHTMLCorrectly(t *testing.T) {
 	assert.Equal("母ちゃん「かあ」も同じ「おな」事「こと」", results[0].Reading)
 	assert.Equal(3, len(results[0].KanjiReadings))
 	assert.Equal("I also really had the feeling of having had a relaxed day with my family for the first time in a long while.", results[1].English)
-	assert.Equal("私もほんとに", results[1].Japanese)
-	assert.Equal("私「わたし」もほんとに", results[1].Reading)
+	assert.Equal("私も、ほんとに。", results[1].Japanese)
+	assert.Equal("私「わたし」も、ほんとに。", results[1].Reading)
 	assert.Equal(1, len(results[1].KanjiReadings))
 }
 
@@ -137,4 +137,36 @@ func Test_GetSentencesforKanji_MakesMultipageRequestsForSentences_NotEnoughSente
 	jisho.GetSentencesforKanji("何も", 5)
 	mrc.AssertCalled(t, "Get", makeJishoURL("何も", 1))
 	mrc.AssertCalled(t, "Get", makeJishoURL("何も", 2))
+}
+
+func Test_Regression_Issue1(t *testing.T) {
+	Issue1Test := `
+    <ul class="sentences">
+       <li class="entry sentence clearfix">
+          <div class="debug">74182</div>
+          <div class="sentence_content">
+             <ul class="japanese_sentence japanese japanese_gothic clearfix" lang="ja">
+                <li class="clearfix"><span class="furigana">けっきょく</span><span class="unlinked">結局</span></li>
+                、
+                <li class="clearfix"><span class="furigana">ほうあん</span><span class="unlinked">法案</span></li>
+                <li class="clearfix"><span class="unlinked">は</span></li>
+                <li class="clearfix"><span class="unlinked">提出断念</span></li>
+                <li class="clearfix"><span class="unlinked">に</span></li>
+                <li class="clearfix"><span class="furigana">おいこ</span><span class="unlinked">追い込まれた</span></li>
+                <li class="clearfix"><span class="unlinked">のだった</span></li>
+                。
+             </ul>
+             <div class="english_sentence clearfix">
+                <span class="english">In the end the bill was forced into being withdrawn.</span>
+                <span class="inline_copyright">— <a href="http://tatoeba.org/eng/sentences/show/74182">Tatoeba</a></span>
+             </div>
+          </div>
+          <a class="light-details_link" href="//jisho.org/sentences/51866354d5dda7e9810000e3">Details ▸</a>
+       </li>
+    </ul>
+    `
+	jisho, mrc := newJishoTestObjects()
+	mrc.On("Get", mock.AnythingOfType("string")).Return(Issue1Test, nil)
+	results := jisho.GetSentencesforKanji("", 1)
+	assert.Equal(t, "結局、法案は提出断念に追い込まれたのだった。", results[0].Japanese)
 }
