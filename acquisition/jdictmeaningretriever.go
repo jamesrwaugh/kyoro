@@ -1,4 +1,4 @@
-package kyoro
+package acquisition
 
 import (
 	"log"

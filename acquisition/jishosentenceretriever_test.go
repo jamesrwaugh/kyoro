@@ -1,11 +1,9 @@
-package kyoro_test
+package acquisition
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/jamesrwaugh/kyoro"
-	"github.com/jamesrwaugh/kyoro/resourceclient"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -85,9 +83,9 @@ func makeJishoURL(term string, pageNumber int) string {
 	return fmt.Sprintf("https://jisho.org/search/%s %%23sentences?page=%d", term, pageNumber)
 }
 
-func newJishoTestObjects() (jisho *kyoro.JishoSentenceRetreiver, mrc *resourceclient.MockResourceClient) {
-	mrc = &resourceclient.MockResourceClient{}
-	jisho = kyoro.NewJishoSentenceRetreiver(mrc)
+func newJishoTestObjects() (jisho *JishoSentenceRetreiver, mrc *MockResourceClient) {
+	mrc = &MockResourceClient{}
+	jisho = NewJishoSentenceRetreiver(mrc)
 	return
 }
 

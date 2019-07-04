@@ -1,4 +1,4 @@
-package resourceclient
+package acquisition
 
 import "github.com/stretchr/testify/mock"
 

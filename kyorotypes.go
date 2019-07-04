@@ -1,36 +1,7 @@
 package kyoro
 
-// AnkiCard represents a card to go into Anki
-type AnkiCard struct {
-	DeckName  string
-	ModelName string
-	Fields    map[string]string
-	Tags      []string
-}
-
-// Sentence has enough information to describe a sentence
-type Translation struct {
-	Japanese      string
-	Reading       string
-	KanjiReadings []string
-	English       string
-}
-
-type MeaningRetriever interface {
-	GetMeaningforKanji(kanji string) Translation
-}
-
-// SentenceRetriever gets sentences from an outside source for a kanji
-type SentenceRetriever interface {
-	GetSentencesforKanji(kanji string, maxSentences int) []Translation
-}
-
-// AnkiService should add a given card to Anki.
-type AnkiService interface {
-	IsConnected() bool
-	MaxSentencesPerCard() int
-	AddCard(card AnkiCard) bool
-}
+import "github.com/jamesrwaugh/kyoro/anki"
+import "github.com/jamesrwaugh/kyoro/acquisition"
 
 // Options tells Kyoro how to help you.
 type Options struct {
@@ -65,5 +36,5 @@ type Options struct {
 
 // Kyoro is the driver.
 type Kyoro interface {
-	Kyoro(options Options, anki AnkiService, sentenceSource SentenceRetriever) bool
+	Kyoro(options Options, anki anki.AnkiService, sentenceSource acquisition.SentenceRetriever) bool
 }

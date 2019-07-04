@@ -1,4 +1,4 @@
-package resourceclient
+package acquisition
 
 import (
 	"github.com/anaskhan96/soup"

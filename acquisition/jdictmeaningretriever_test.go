@@ -1,9 +1,10 @@
-package kyoro_test
+package acquisition
 
-import "testing"
-import "github.com/jamesrwaugh/kyoro"
-import "github.com/jamesrwaugh/kyoro/resourceclient"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 var 先生テスト string = `
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -51,11 +52,11 @@ func TestGetMeaningforKanji(t *testing.T) {
 		{"ない", "", "", ""},
 	}
 
-	mrc := resourceclient.MockResourceClient{}
+	mrc := MockResourceClient{}
 	mrc.On("Get", "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ%E5%85%88%E7%94%9F").Return(先生テスト)
 	mrc.On("Get", "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ%E3%81%AA%E3%81%97").Return("")
 	mrc.On("Get", "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ%E3%81%AA%E3%81%84").Return(文がないテスト)
-	jdict := kyoro.NewJdictMeaningRetriever(&mrc)
+	jdict := NewJdictMeaningRetriever(&mrc)
 
 	for _, c := range cases {
 		result := jdict.GetMeaningforKanji(c.in)

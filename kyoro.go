@@ -6,12 +6,18 @@ import (
 	"html/template"
 	"log"
 	"strings"
+
+	"github.com/jamesrwaugh/kyoro/acquisition"
+	"github.com/jamesrwaugh/kyoro/anki"
 )
 
 type KyoroProduction struct {
 }
 
-func (this KyoroProduction) makeSentenceAnkiCard(sentence Translation, options Options) AnkiCard {
+func (this KyoroProduction) makeSentenceAnkiCard(
+	sentence acquisition.Translation,
+	options Options,
+) anki.AnkiCard {
 	boldInputPhrase := fmt.Sprintf("<b>%s</b>", options.InputPhrase)
 	boldJapanese := strings.Replace(sentence.Japanese, options.InputPhrase, boldInputPhrase, -1)
 	cardFields := map[string]string{
@@ -21,7 +27,7 @@ func (this KyoroProduction) makeSentenceAnkiCard(sentence Translation, options O
 	if !options.MonoligualMode {
 		cardFields["english"] = sentence.English
 	}
-	return AnkiCard{
+	return anki.AnkiCard{
 		DeckName:  options.DeckName,
 		ModelName: options.ModelName,
 		Fields:    cardFields,
@@ -31,7 +37,10 @@ func (this KyoroProduction) makeSentenceAnkiCard(sentence Translation, options O
 	}
 }
 
-func (this KyoroProduction) generateKeywordBackHTML(sentences []Translation, monoligualMode bool) (result string, err error) {
+func (this KyoroProduction) generateKeywordBackHTML(
+	sentences []acquisition.Translation,
+	monoligualMode bool,
+) (result string, err error) {
 	backHTMLTemplate := `
 	<ul>
     	{{range .sentences}}
@@ -59,7 +68,11 @@ func (this KyoroProduction) generateKeywordBackHTML(sentences []Translation, mon
 	return
 }
 
-func (this KyoroProduction) makeKeywordAnkiCard(options Options, inputPhrase Translation, sentences []Translation) AnkiCard {
+func (this KyoroProduction) makeKeywordAnkiCard(
+	options Options,
+	inputPhrase acquisition.Translation,
+	sentences []acquisition.Translation,
+) anki.AnkiCard {
 	cardFields := map[string]string{
 		"japanese": inputPhrase.Japanese,
 	}
@@ -69,7 +82,7 @@ func (this KyoroProduction) makeKeywordAnkiCard(options Options, inputPhrase Tra
 	backMatter, _ := this.generateKeywordBackHTML(sentences, options.MonoligualMode)
 	cardFields["sentences"] = backMatter
 	cardFields["reading"] = inputPhrase.Reading
-	return AnkiCard{
+	return anki.AnkiCard{
 		DeckName:  options.DeckName,
 		ModelName: options.ModelName,
 		Fields:    cardFields,
@@ -79,7 +92,12 @@ func (this KyoroProduction) makeKeywordAnkiCard(options Options, inputPhrase Tra
 	}
 }
 
-func (this KyoroProduction) Kyoro(options Options, anki AnkiService, sentenceSource SentenceRetriever, meaningSource MeaningRetriever) bool {
+func (this KyoroProduction) Kyoro(
+	options Options,
+	anki anki.AnkiService,
+	sentenceSource acquisition.SentenceRetriever,
+	meaningSource acquisition.MeaningRetriever,
+) bool {
 	if !anki.IsConnected() {
 		log.Fatal("Could not connect to Anki. Failing.")
 		return false

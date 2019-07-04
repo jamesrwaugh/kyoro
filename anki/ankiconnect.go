@@ -1,4 +1,4 @@
-package kyoro
+package anki
 
 import (
 	"bytes"
@@ -11,8 +11,14 @@ import (
 )
 
 type AnkiConnect struct {
+	client   *http.Client
 	Hostname string
 	Port     int64
+}
+
+func NewAnkiConnect(client *http.Client, host string, port int64) AnkiService {
+	a := &AnkiConnect{client, host, port}
+	return a
 }
 
 func (this AnkiConnect) responseHasError(resp *http.Response, err error) bool {
@@ -65,7 +71,7 @@ func (this AnkiConnect) AddCard(card AnkiCard) bool {
 	requestString, _ := json.Marshal(request)
 	log.Println(string(requestString))
 
-	resp, err := http.Post(this.GetEndpoint(), "application/json", bytes.NewBuffer(requestString))
+	resp, err := this.client.Post(this.GetEndpoint(), "application/json", bytes.NewBuffer(requestString))
 	if err != nil {
 		return false
 	}
