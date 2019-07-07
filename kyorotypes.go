@@ -36,5 +36,5 @@ type Options struct {
 
 // Kyoro is the driver.
 type Kyoro interface {
-	Kyoro(options Options, anki anki.AnkiService, sentenceSource acquisition.SentenceRetriever) bool
+	Kyoro(options Options, anki anki.AnkiService, sentenceSource acquisition.SentenceRetriever, meaningSource acquisition.MeaningRetriever) bool
 }

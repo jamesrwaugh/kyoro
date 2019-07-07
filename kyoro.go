@@ -14,6 +14,10 @@ import (
 type KyoroProduction struct {
 }
 
+func NewKyoro() (instance Kyoro) {
+	return &KyoroProduction{}
+}
+
 func (this KyoroProduction) makeSentenceAnkiCard(
 	sentence acquisition.Translation,
 	options Options,
@@ -42,19 +46,19 @@ func (this KyoroProduction) generateKeywordBackHTML(
 	monoligualMode bool,
 ) (result string, err error) {
 	backHTMLTemplate := `
-	<ul>
-    	{{range .sentences}}
-			<li style="text-align: left">{{.Japanese}}</li>
-			<ul>
-				{{range .KanjiReadings}}
-					<li style="text-align: left"><sub>{{.}}</sub></li>
-				{{end}}
-				{{if .English }}
-					<li style="text-align: left"><sub>{{.English}}</sub></li>
-				{{end}}
-			</ul>
-		{{end}}
-	</ul>`
+<ul>
+  {{range .sentences}}
+    <li style="text-align: left">{{.Japanese}}</li>
+    <ul>
+      {{range .KanjiReadings}}
+        <li style="text-align: left"><sub>{{.}}</sub></li>
+      {{end}}
+      {{if .English }}
+        <li style="text-align: left"><sub>{{.English}}</sub></li>
+      {{end}}
+    </ul>
+  {{end}}
+</ul>`
 	data := map[string]interface{}{
 		"sentences":   sentences,
 		"monolingual": monoligualMode,
@@ -99,7 +103,7 @@ func (this KyoroProduction) Kyoro(
 	meaningSource acquisition.MeaningRetriever,
 ) bool {
 	if !anki.IsConnected() {
-		log.Fatal("Could not connect to Anki. Failing.")
+		log.Println("Could not connect to Anki. Failing.")
 		return false
 	}
 	sentences := sentenceSource.GetSentencesforKanji(options.InputPhrase, options.MaxSentences)
