@@ -1,4 +1,4 @@
-package kyoro
+package main
 
 import "github.com/jamesrwaugh/kyoro/anki"
 import "github.com/jamesrwaugh/kyoro/acquisition"

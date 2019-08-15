@@ -1,4 +1,4 @@
-package kyoro
+package main
 
 import (
 	"bytes"
@@ -157,7 +157,7 @@ var 文がないテスト string = `
 </HTML>`
 
 func Test_Kyoro_NotSentencesOnFrontMode_AddsExpectedCardCount(t *testing.T) {
-	env := makeKyoroTestEnvironment()
+	//env := makeKyoroTestEnvironment()
 }
 
 /*func Test_Kyoro_SentencesOnFrontMode_CardHasExpectedFields(t *testing.T) {

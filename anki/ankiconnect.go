@@ -12,8 +12,8 @@ import (
 
 type AnkiConnect struct {
 	client   HttpClient
-	Hostname string
-	Port     int64
+	hostname string
+	port     int64
 }
 
 func NewAnkiConnect(client HttpClient, host string, port int64) AnkiService {
@@ -40,7 +40,7 @@ func (this AnkiConnect) responseHasError(resp *http.Response, err error) bool {
 }
 
 func (this AnkiConnect) GetEndpoint() string {
-	return this.Hostname + ":" + strconv.FormatInt(this.Port, 10)
+	return this.hostname + ":" + strconv.FormatInt(this.port, 10)
 }
 
 func (this AnkiConnect) IsConnected() bool {
