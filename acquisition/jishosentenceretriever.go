@@ -8,16 +8,19 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
-func NewJishoSentenceRetreiver(c ResourceClient) *JishoSentenceRetreiver {
-	j := JishoSentenceRetreiver{c}
+// NewJishoSentenceretriever creates a new JishoSentenceretriever
+// To retrieve a sentence from Jisho.org
+func NewJishoSentenceretriever(c ResourceClient) *JishoSentenceretriever {
+	j := JishoSentenceretriever{c}
 	return &j
 }
 
-type JishoSentenceRetreiver struct {
+// JishoSentenceretriever retrieves a sentence from Jisho.org
+type JishoSentenceretriever struct {
 	client ResourceClient
 }
 
-func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (japanese string, reading string, kaniReadings []string) {
+func (jisho JishoSentenceretriever) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (japanese string, reading string, kaniReadings []string) {
 	for _, element := range japaneseSentence.Children() {
 		nodeValue := strings.TrimSpace(element.NodeValue)
 		if nodeValue == "li" {
@@ -40,13 +43,13 @@ func (this JishoSentenceRetreiver) buildJapaneseAndReadingStrings(japaneseSenten
 	return
 }
 
-func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Root, sentences *[]Translation, maxSentences int) {
+func (jisho JishoSentenceretriever) addSentencesFromPage(foundSentences []soup.Root, sentences *[]Translation, maxSentences int) {
 	for _, sentence := range foundSentences {
 		if len(*sentences) >= maxSentences {
 			break
 		}
 		japaneseSentence := sentence.Find("ul", "class", "japanese_sentence")
-		japanseString, readingString, kaniReadings := this.buildJapaneseAndReadingStrings(japaneseSentence)
+		japanseString, readingString, kaniReadings := jisho.buildJapaneseAndReadingStrings(japaneseSentence)
 		englishSentence := sentence.Find("div", "class", "english_sentence").Find("span", "class", "english")
 		*sentences = append(*sentences, Translation{
 			Japanese:      japanseString,
@@ -57,18 +60,19 @@ func (this JishoSentenceRetreiver) addSentencesFromPage(foundSentences []soup.Ro
 	}
 }
 
-func (this JishoSentenceRetreiver) GetSentencesforKanji(kanji string, maxSentences int) []Translation {
+// GetSentencesforKanji gets a number of sentences for a given kanji.
+func (jisho JishoSentenceretriever) GetSentencesforKanji(kanji string, maxSentences int) []Translation {
 	var sentences []Translation
 	for pageNumber := 1; len(sentences) < maxSentences; pageNumber++ {
 		url := fmt.Sprintf("https://jisho.org/search/%s %%23sentences?page=%d", kanji, pageNumber)
 		log.Println("Looking for sentences on " + url)
-		resp, _ := this.client.Get(url)
+		resp, _ := jisho.client.Get(url)
 		doc := soup.HTMLParse(resp)
 		foundSentences := doc.FindAll("div", "class", "sentence_content")
 		if len(foundSentences) == 0 {
 			break
 		}
-		this.addSentencesFromPage(foundSentences, &sentences, maxSentences)
+		jisho.addSentencesFromPage(foundSentences, &sentences, maxSentences)
 	}
 	return sentences
 }

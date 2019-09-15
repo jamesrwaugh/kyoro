@@ -33,7 +33,7 @@ func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	//
 	mrc := &acquisition.MockResourceClient{}
-	jisho := acquisition.NewJishoSentenceRetreiver(mrc)
+	jisho := acquisition.NewJishoSentenceretriever(mrc)
 	jmdict := acquisition.NewJdictMeaningRetriever(mrc)
 
 	//

@@ -9,16 +9,19 @@ import (
 	"github.com/anaskhan96/soup"
 )
 
+// NewJdictMeaningRetriever creates a new JdictMeaningRetriever
+// To retrieve a word's meaning from JDict
 func NewJdictMeaningRetriever(c ResourceClient) *JdictMeaningRetriever {
 	r := JdictMeaningRetriever{c}
 	return &r
 }
 
+// JdictMeaningRetriever retrieves a word's meaning from JDict
 type JdictMeaningRetriever struct {
 	client ResourceClient
 }
 
-func (this JdictMeaningRetriever) getJDicResults(word string) []string {
+func (dict JdictMeaningRetriever) getJDicResults(word string) []string {
 	// URL query format from http://nihongo.monash.edu/wwwjdicinf.html#backdoor_tag:
 	// 	1: Dictionary type: Dictionary to use, EDICT
 	// 	Z: Return format:   Backdoor entry, raw data only
@@ -27,7 +30,7 @@ func (this JdictMeaningRetriever) getJDicResults(word string) []string {
 	// The search query is appended to the end as URL-escapted UTF-8 in this case.
 	baseURL := "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ"
 	url := baseURL + url.QueryEscape(word)
-	html, _ := this.client.Get(url)
+	html, _ := dict.client.Get(url)
 	doc := soup.HTMLParse(html)
 	results := doc.Find("pre")
 	if results.Error != nil {
@@ -38,7 +41,7 @@ func (this JdictMeaningRetriever) getJDicResults(word string) []string {
 	return resultLines
 }
 
-func (this JdictMeaningRetriever) parseDictionaryEntries(word string, entries []string) Translation {
+func (dict JdictMeaningRetriever) parseDictionaryEntries(word string, entries []string) Translation {
 	r, _ := regexp.Compile("(.*) \\[(.*)\\] ?\\/\\((.*?)\\) ?(.*)\\/")
 	for _, entry := range entries {
 		matches := r.FindStringSubmatch(entry)
@@ -56,7 +59,8 @@ func (this JdictMeaningRetriever) parseDictionaryEntries(word string, entries []
 	return Translation{}
 }
 
-func (this JdictMeaningRetriever) GetMeaningforKanji(word string) Translation {
-	dictionaryEntries := this.getJDicResults(word)
-	return this.parseDictionaryEntries(word, dictionaryEntries)
+// GetMeaningforKanji retrieves a word's meaning from JDict
+func (dict JdictMeaningRetriever) GetMeaningforKanji(word string) Translation {
+	dictionaryEntries := dict.getJDicResults(word)
+	return dict.parseDictionaryEntries(word, dictionaryEntries)
 }

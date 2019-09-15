@@ -83,9 +83,9 @@ func makeJishoURL(term string, pageNumber int) string {
 	return fmt.Sprintf("https://jisho.org/search/%s %%23sentences?page=%d", term, pageNumber)
 }
 
-func newJishoTestObjects() (jisho *JishoSentenceRetreiver, mrc *MockResourceClient) {
+func newJishoTestObjects() (jisho *JishoSentenceretriever, mrc *MockResourceClient) {
 	mrc = &MockResourceClient{}
-	jisho = NewJishoSentenceRetreiver(mrc)
+	jisho = NewJishoSentenceretriever(mrc)
 	return
 }
 
