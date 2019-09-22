@@ -11,14 +11,16 @@ import (
 	"github.com/jamesrwaugh/kyoro/anki"
 )
 
+// KyoroProduction is the actual real thing.
 type KyoroProduction struct {
 }
 
+// NewKyoro creates a new Kyoro object.
 func NewKyoro() (instance Kyoro) {
 	return &KyoroProduction{}
 }
 
-func (this KyoroProduction) makeSentenceAnkiCard(
+func (kyoro KyoroProduction) makeSentenceAnkiCard(
 	sentence acquisition.Translation,
 	options Options,
 ) anki.AnkiCard {
@@ -41,7 +43,7 @@ func (this KyoroProduction) makeSentenceAnkiCard(
 	}
 }
 
-func (this KyoroProduction) generateKeywordBackHTML(
+func (kyoro KyoroProduction) generateKeywordBackHTML(
 	sentences []acquisition.Translation,
 	monoligualMode bool,
 ) (result string, err error) {
@@ -72,7 +74,7 @@ func (this KyoroProduction) generateKeywordBackHTML(
 	return
 }
 
-func (this KyoroProduction) makeKeywordAnkiCard(
+func (kyoro KyoroProduction) makeKeywordAnkiCard(
 	options Options,
 	inputPhrase acquisition.Translation,
 	sentences []acquisition.Translation,
@@ -83,7 +85,7 @@ func (this KyoroProduction) makeKeywordAnkiCard(
 	if !options.MonoligualMode {
 		cardFields["english"] = inputPhrase.English
 	}
-	backMatter, _ := this.generateKeywordBackHTML(sentences, options.MonoligualMode)
+	backMatter, _ := kyoro.generateKeywordBackHTML(sentences, options.MonoligualMode)
 	cardFields["sentences"] = backMatter
 	cardFields["reading"] = inputPhrase.Reading
 	return anki.AnkiCard{
@@ -96,7 +98,9 @@ func (this KyoroProduction) makeKeywordAnkiCard(
 	}
 }
 
-func (this KyoroProduction) Kyoro(
+// Kyoro runs the main procedure of Kyoro from the command line,
+// and adds cards accordingly.
+func (kyoro KyoroProduction) Kyoro(
 	options Options,
 	anki anki.AnkiService,
 	sentenceSource acquisition.SentenceRetriever,
@@ -109,12 +113,12 @@ func (this KyoroProduction) Kyoro(
 	sentences := sentenceSource.GetSentencesforKanji(options.InputPhrase, options.MaxSentences)
 	if options.SentencesOnFrontMode {
 		for _, sentence := range sentences {
-			card := this.makeSentenceAnkiCard(sentence, options)
+			card := kyoro.makeSentenceAnkiCard(sentence, options)
 			anki.AddCard(card)
 		}
 	} else {
 		meaning := meaningSource.GetMeaningforKanji(options.InputPhrase)
-		card := this.makeKeywordAnkiCard(options, meaning, sentences)
+		card := kyoro.makeKeywordAnkiCard(options, meaning, sentences)
 		anki.AddCard(card)
 	}
 

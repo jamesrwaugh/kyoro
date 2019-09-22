@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func MakeKyoroOptions(cli *cli.Context) Options {
+func makeKyoroOptions(cli *cli.Context) Options {
 	return Options{
 		DeckName:       cli.GlobalString("deck-name"),
 		ModelName:      cli.GlobalString("model-name"),
@@ -64,7 +64,7 @@ sources and importing them into Aki with sentence and vocabulary-focused modes.`
 			Name:  "sentences",
 			Usage: "Creates --max-sentences sentence cards, one sentence per card",
 			Action: func(c *cli.Context) error {
-				options := MakeKyoroOptions(c)
+				options := makeKyoroOptions(c)
 				options.SentencesOnFrontMode = true
 				runKyoro(options)
 				return nil
@@ -74,7 +74,7 @@ sources and importing them into Aki with sentence and vocabulary-focused modes.`
 			Name:  "vocab",
 			Usage: "Create a single card with --max-sentences sentences in the card.",
 			Action: func(c *cli.Context) error {
-				options := MakeKyoroOptions(c)
+				options := makeKyoroOptions(c)
 				options.SentencesOnFrontMode = false
 				runKyoro(options)
 				return nil
