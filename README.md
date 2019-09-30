@@ -1,6 +1,6 @@
 # Kyoro
 
-Kyoro is a configurable command line tool that helps builds Japanese sentence cards in Anki quickly, by taking a term on your clipboard (or by the CLI) and generating a set of sentence cards the term appears in.
+Kyoro is a configurable [AnkiConnect](https://github.com/FooSoft/anki-connect)-based command line tool that helps builds Japanese sentence cards in Anki quickly, by taking a term on your clipboard (not yet), or by the CLI, and generating a set of sentence cards the term appears in.
 
 ## Features
 
