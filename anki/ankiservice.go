@@ -4,5 +4,6 @@ package anki
 type AnkiService interface {
 	IsConnected() bool
 	MaxSentencesPerCard() int
+	HasMiaCardModel() bool
 	AddCard(card AnkiCard) bool
 }

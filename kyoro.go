@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"html/template"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
@@ -36,6 +38,25 @@ func (kyoro KyoroProduction) makeSentenceAnkiCard(
 	return anki.AnkiCard{
 		DeckName:  options.DeckName,
 		ModelName: options.ModelName,
+		Fields:    cardFields,
+		Tags: []string{
+			"kyoro",
+		},
+	}
+}
+
+// Creates a sentence card for the MIA Sentence Card format.
+// https://massimmersionapproach.com/table-of-contents/anki/mia-japanese-addon/
+func (kyoro KyoroProduction) makeMiaSentenceAnkiCard(sentence acquisition.Translation, options Options) anki.AnkiCard {
+	boldInputPhrase := fmt.Sprintf("<b>%s</b>", options.InputPhrase)
+	boldJapanese := strings.Replace(sentence.Japanese, options.InputPhrase, boldInputPhrase, -1)
+	cardFields := map[string]string{
+		"Expression": boldJapanese,
+		"Meaning":    sentence.English,
+	}
+	return anki.AnkiCard{
+		DeckName:  options.DeckName,
+		ModelName: "MIA Japanese",
 		Fields:    cardFields,
 		Tags: []string{
 			"kyoro",
@@ -98,28 +119,70 @@ func (kyoro KyoroProduction) makeKeywordAnkiCard(
 	}
 }
 
+// TODO: This should be abstracted out into different methods, like a console
+// verifier, to mock, GUI, Zenity, others.
+func (kyoro KyoroProduction) getUserConfirmedSentences(
+	options Options,
+	sentenceSource acquisition.SentenceRetriever,
+) []acquisition.Translation {
+	var acceptedSentences []acquisition.Translation
+	for len(acceptedSentences) < options.MaxSentences {
+		// TODO: Fix Infinite loop when there are sentences, but the user has rejected
+		// all of them. In this case, the "len(sentences) == 0" will never be true, and
+		// the above condition will also never be true.
+		// To solve this and other issues, it would be best to have a "start from" index
+		// in the sentence interface.
+		sentences := sentenceSource.GetSentencesforKanji(options.InputPhrase, 10*options.MaxSentences)
+		if len(sentences) == 0 {
+			break
+		}
+		for index, sentence := range sentences {
+			fmt.Printf("(Got %d) %d. [Y/n] '%s' '%s' ", len(acceptedSentences), index, sentence.Japanese, sentence.English)
+			scanner := bufio.NewScanner(os.Stdin)
+			scanner.Scan()
+			text := scanner.Text()
+			if len(text) == 0 || text == "y" {
+				acceptedSentences = append(acceptedSentences, sentence)
+			}
+			if len(acceptedSentences) >= options.MaxSentences {
+				break
+			}
+		}
+	}
+	return acceptedSentences
+}
+
 // Kyoro runs the main procedure of Kyoro from the command line,
 // and adds cards accordingly.
 func (kyoro KyoroProduction) Kyoro(
 	options Options,
-	anki anki.AnkiService,
+	ankiService anki.AnkiService,
 	sentenceSource acquisition.SentenceRetriever,
 	meaningSource acquisition.MeaningRetriever,
 ) bool {
-	if !anki.IsConnected() {
+	if !ankiService.IsConnected() {
 		log.Println("Could not connect to Anki. Failing.")
 		return false
 	}
-	sentences := sentenceSource.GetSentencesforKanji(options.InputPhrase, options.MaxSentences)
+	sentences := kyoro.getUserConfirmedSentences(options, sentenceSource)
 	if options.SentencesOnFrontMode {
 		for _, sentence := range sentences {
-			card := kyoro.makeSentenceAnkiCard(sentence, options)
-			anki.AddCard(card)
+			var card anki.AnkiCard
+			// TODO: This should be handled elsewhere
+			// - Default the model name to MIA?
+			// - Move this to "makeSentenceAnkiCard"?
+			if options.ModelName == "MIA Japanese" {
+				card = kyoro.makeMiaSentenceAnkiCard(sentence, options)
+			} else {
+				card = kyoro.makeSentenceAnkiCard(sentence, options)
+			}
+
+			ankiService.AddCard(card)
 		}
 	} else {
 		meaning := meaningSource.GetMeaningforKanji(options.InputPhrase)
 		card := kyoro.makeKeywordAnkiCard(options, meaning, sentences)
-		anki.AddCard(card)
+		ankiService.AddCard(card)
 	}
 
 	return true

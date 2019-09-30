@@ -10,6 +10,15 @@ import (
 	"time"
 )
 
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 type AnkiConnect struct {
 	client   HttpClient
 	hostname string
@@ -21,7 +30,7 @@ func NewAnkiConnect(client HttpClient, host string, port int64) AnkiService {
 	return a
 }
 
-func (this AnkiConnect) responseHasError(resp *http.Response, err error) bool {
+func (ac AnkiConnect) responseHasError(resp *http.Response, err error) bool {
 	// Fail early if the requst itself failed.
 	if err != nil {
 		log.Fatal("Recieved network error: ", err.Error())
@@ -39,20 +48,30 @@ func (this AnkiConnect) responseHasError(resp *http.Response, err error) bool {
 	return false
 }
 
-func (this AnkiConnect) GetEndpoint() string {
-	return this.hostname + ":" + strconv.FormatInt(this.port, 10)
+func (ac AnkiConnect) GetEndpoint() string {
+	return ac.hostname + ":" + strconv.FormatInt(ac.port, 10)
 }
 
-func (this AnkiConnect) IsConnected() bool {
-	r, err := this.client.Get(this.GetEndpoint())
+func (ac AnkiConnect) IsConnected() bool {
+	r, err := ac.client.Get(ac.GetEndpoint())
 	return (r.StatusCode == 200) && (err == nil)
 }
 
-func (this AnkiConnect) MaxSentencesPerCard() int {
+func (ac AnkiConnect) MaxSentencesPerCard() int {
 	return 1
 }
 
-func (this AnkiConnect) AddCard(card AnkiCard) bool {
+func (ac AnkiConnect) HasMiaCardModel() bool {
+	request := map[string]interface{}{
+		"action":  "modelNames",
+		"version": 6,
+	}
+	resp, _ := ac.getAnkiConnectJSONResponse(request)
+	modelNames, _ := resp["result"].([]string)
+	return contains(modelNames, "MIA Japanese")
+}
+
+func (ac AnkiConnect) AddCard(card AnkiCard) bool {
 	request := map[string]interface{}{
 		"action":  "addNote",
 		"version": 6,
@@ -68,18 +87,25 @@ func (this AnkiConnect) AddCard(card AnkiCard) bool {
 			},
 		},
 	}
-	requestString, _ := json.Marshal(request)
-	log.Println(string(requestString))
 
-	resp, err := this.client.Post(this.GetEndpoint(), "application/json", bytes.NewBuffer(requestString))
-	if err != nil {
-		return false
-	}
-	defer resp.Body.Close()
+	_, err := ac.getAnkiConnectJSONResponse(request)
 
 	// It seems adding cards too quickly results in strange issues.
 	// Make sure that doesn't happen here.
 	time.Sleep(500)
 
-	return !this.responseHasError(resp, err)
+	return err == nil
+}
+
+func (ac AnkiConnect) getAnkiConnectJSONResponse(request map[string]interface{}) (map[string]interface{}, error) {
+	requestString, _ := json.Marshal(request)
+	resp, err := ac.client.Post(ac.GetEndpoint(), "application/json", bytes.NewBuffer(requestString))
+	if ac.responseHasError(resp, err) {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+	var ankiConnectResponse map[string]interface{}
+	json.Unmarshal(bodyBytes, &ankiConnectResponse)
+	return ankiConnectResponse, nil
 }
