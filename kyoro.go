@@ -119,8 +119,9 @@ func (kyoro KyoroProduction) makeKeywordAnkiCard(
 	}
 }
 
-// TODO: This should be abstracted out into different methods, like a console
-// verifier, to mock, GUI, Zenity, others.
+// TODO: This should be abstracted out into different implementations, like a console
+// verifier, a mock one, GUI, Zenity, others.
+// The tests currently cannoy run becasue of this.
 func (kyoro KyoroProduction) getUserConfirmedSentences(
 	options Options,
 	sentenceSource acquisition.SentenceRetriever,
