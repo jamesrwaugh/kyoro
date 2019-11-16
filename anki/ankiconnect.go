@@ -54,7 +54,7 @@ func (ac AnkiConnect) GetEndpoint() string {
 
 func (ac AnkiConnect) IsConnected() bool {
 	r, err := ac.client.Get(ac.GetEndpoint())
-	return (r.StatusCode == 200) && (err == nil)
+	return (r != nil) && (r.StatusCode == 200) && (err == nil)
 }
 
 func (ac AnkiConnect) MaxSentencesPerCard() int {
