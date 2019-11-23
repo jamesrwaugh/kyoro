@@ -37,7 +37,7 @@ func (rc productionResourceClient) Get(address string) (string, error) {
 
 func runKyoro(options Options) bool {
 	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765)
-	sentences := acquisition.NewJishoSentenceretriever(productionResourceClient{})
+	sentences := acquisition.NewJibikiSentenceretriever(productionResourceClient{})
 	meaning := acquisition.NewJdictMeaningRetriever(productionResourceClient{})
 	mao := KyoroProduction{}
 	return mao.Kyoro(options, anki, sentences, meaning)

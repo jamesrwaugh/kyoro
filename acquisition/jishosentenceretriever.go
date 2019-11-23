@@ -72,7 +72,7 @@ func (jisho JishoSentenceretriever) GetSentencesforKanji(kanji string, maxSenten
 	var sentences []Translation
 	for pageNumber := 1; len(sentences) < maxSentences; pageNumber++ {
 		url := fmt.Sprintf("https://jisho.org/search/%s %%23sentences?page=%d", kanji, pageNumber)
-		log.Println("Looking for sentences on " + url)
+		log.Println("[Jisho] Looking for sentences on " + url)
 		resp, _ := jisho.client.Get(url)
 		doc := soup.HTMLParse(resp)
 		foundSentences := doc.FindAll("div", "class", "sentence_content")
