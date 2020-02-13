@@ -47,10 +47,10 @@ func (jibiki JibikiSentenceretriever) GetSentencesforKanji(kanji string, maxSent
 	}
 
 	for _, sentence := range jibikiResponse {
-		translation := sentence.Translations[0].Sentence
+		firstEntry := sentence.Translations[0]
 		sentences = append(sentences, Translation{
-			Japanese: sentence.Sentence,
-			English:  translation,
+			Japanese: firstEntry.Sentence,
+			English:  sentence.Sentence,
 		})
 	}
 
