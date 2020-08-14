@@ -1,7 +1,10 @@
 package main
 
-import "github.com/jamesrwaugh/kyoro/anki"
-import "github.com/jamesrwaugh/kyoro/acquisition"
+import (
+	"github.com/jamesrwaugh/kyoro/acquisition"
+	"github.com/jamesrwaugh/kyoro/anki"
+	"github.com/jamesrwaugh/kyoro/verification"
+)
 
 // Options tells Kyoro how to help you.
 type Options struct {
@@ -32,6 +35,14 @@ type Options struct {
 	// When true, no confirmation dialogs will appear and any sentences
 	// pulled will be added as cards unequivocally.
 	SilentMode bool
+}
+
+// KyoroDependencies is a structure containing all of Kyoro's dependencies.
+type KyoroDependencies struct {
+	anki             *anki.AnkiService
+	sentenceSource   *acquisition.SentenceRetriever
+	meaningSource    *acquisition.MeaningRetriever
+	sentenceVerifier *verification.SentenceVerifier
 }
 
 // Kyoro is the driver.
