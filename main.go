@@ -8,6 +8,7 @@ import (
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
 	"github.com/jamesrwaugh/kyoro/anki"
+	"github.com/jamesrwaugh/kyoro/verification"
 	"github.com/urfave/cli"
 )
 
@@ -39,8 +40,9 @@ func runKyoro(options Options) bool {
 	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765)
 	sentences := acquisition.NewJibikiSentenceretriever(productionResourceClient{})
 	meaning := acquisition.NewJdictMeaningRetriever(productionResourceClient{})
+	verifier := verification.NewConsoleSentenceVerifier()
 	mao := KyoroProduction{}
-	return mao.Kyoro(options, anki, sentences, meaning)
+	return mao.Kyoro(options, anki, sentences, meaning, verifier)
 }
 
 func main() {
