@@ -1,16 +1,15 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"html/template"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
 	"github.com/jamesrwaugh/kyoro/anki"
+	"github.com/jamesrwaugh/kyoro/verification"
 )
 
 // KyoroProduction is the actual real thing.
@@ -125,6 +124,7 @@ func (kyoro KyoroProduction) makeKeywordAnkiCard(
 func (kyoro KyoroProduction) getUserConfirmedSentences(
 	options Options,
 	sentenceSource acquisition.SentenceRetriever,
+	verifier verification.SentenceVerifier,
 ) []acquisition.Translation {
 	var acceptedSentences []acquisition.Translation
 	for len(acceptedSentences) < options.MaxSentences {
@@ -138,11 +138,12 @@ func (kyoro KyoroProduction) getUserConfirmedSentences(
 			break
 		}
 		for index, sentence := range sentences {
-			fmt.Printf("(Got %d) %d. [Y/n] '%s' '%s' ", len(acceptedSentences), index, sentence.Japanese, sentence.English)
-			scanner := bufio.NewScanner(os.Stdin)
-			scanner.Scan()
-			text := scanner.Text()
-			if len(text) == 0 || text == "y" {
+			confirmed := verifier.UserConfirmSentence(&verification.SentenceVerificationInfo{
+				AcceptedSentences: acceptedSentences,
+				Sentence:          sentence,
+				SentenceIndex:     index,
+			})
+			if confirmed {
 				acceptedSentences = append(acceptedSentences, sentence)
 			}
 			if len(acceptedSentences) >= options.MaxSentences {
@@ -160,12 +161,13 @@ func (kyoro KyoroProduction) Kyoro(
 	ankiService anki.AnkiService,
 	sentenceSource acquisition.SentenceRetriever,
 	meaningSource acquisition.MeaningRetriever,
+	verifier verification.SentenceVerifier,
 ) bool {
 	if !ankiService.IsConnected() {
 		log.Println("Could not connect to Anki. Failing.")
 		return false
 	}
-	sentences := kyoro.getUserConfirmedSentences(options, sentenceSource)
+	sentences := kyoro.getUserConfirmedSentences(options, sentenceSource, verifier)
 	if options.SentencesOnFrontMode {
 		for _, sentence := range sentences {
 			var card anki.AnkiCard

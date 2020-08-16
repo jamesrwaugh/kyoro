@@ -8,6 +8,7 @@ import (
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
 	"github.com/jamesrwaugh/kyoro/anki"
+	"github.com/jamesrwaugh/kyoro/verification"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -19,6 +20,7 @@ type KyoroTestEnvironment struct {
 	AcquiMockRC *acquisition.MockResourceClient
 	Sentences   acquisition.SentenceRetriever
 	Meanings    acquisition.MeaningRetriever
+	Verifier    verification.SentenceVerifier
 }
 
 func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
@@ -27,6 +29,7 @@ func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 		e.Anki,
 		e.Sentences,
 		e.Meanings,
+		e.Verifier,
 	)
 }
 
@@ -35,6 +38,7 @@ func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	mrc := &acquisition.MockResourceClient{}
 	jisho := acquisition.NewJishoSentenceretriever(mrc)
 	jmdict := acquisition.NewJdictMeaningRetriever(mrc)
+	mvf := &verification.MockSentenceVerifier{}
 
 	//
 	ankiConnectClient := &anki.MockHttpClient{}
@@ -47,6 +51,7 @@ func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 		AcquiMockRC: mrc,
 		Sentences:   jisho,
 		Meanings:    jmdict,
+		Verifier:    mvf,
 	}
 }
 
