@@ -15,7 +15,7 @@ import (
 
 type KyoroTestEnvironment struct {
 	Kyoro       Kyoro
-	AnkiClient  *anki.MockHttpClient
+	AnkiClient  *anki.MockHTTPClient
 	Anki        anki.AnkiService
 	AcquiMockRC *acquisition.MockResourceClient
 	Sentences   acquisition.SentenceRetriever
@@ -41,7 +41,7 @@ func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	mvf := &verification.MockSentenceVerifier{}
 
 	//
-	ankiConnectClient := &anki.MockHttpClient{}
+	ankiConnectClient := &anki.MockHTTPClient{}
 	ankiConnect := anki.NewAnkiConnect(ankiConnectClient, "の.の", 50)
 
 	return &KyoroTestEnvironment{

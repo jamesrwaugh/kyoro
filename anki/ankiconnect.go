@@ -19,14 +19,16 @@ func contains(s []string, e string) bool {
 	return false
 }
 
+// AnkiConnect is interface to Anki Connect
+// https://foosoft.net/projects/anki-connect/
 type AnkiConnect struct {
-	client   HttpClient
+	client   HTTPClient
 	hostname string
 	port     int64
 }
 
 // NewAnkiConnect does what it says
-func NewAnkiConnect(client HttpClient, host string, port int64) AnkiService {
+func NewAnkiConnect(client HTTPClient, host string, port int64) AnkiService {
 	a := &AnkiConnect{client, host, port}
 	return a
 }

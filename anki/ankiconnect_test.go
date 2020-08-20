@@ -11,8 +11,8 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func makeAnkiConnectTestObjects() (service AnkiService, client *MockHttpClient) {
-	client = &MockHttpClient{}
+func makeAnkiConnectTestObjects() (service AnkiService, client *MockHTTPClient) {
+	client = &MockHTTPClient{}
 	service = NewAnkiConnect(client, "の.の", 50)
 	return
 }
