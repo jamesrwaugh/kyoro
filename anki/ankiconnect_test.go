@@ -67,3 +67,7 @@ func Test_AddCard_WithValidCardAndNoError_MakesCorrectPostResponse(t *testing.T)
 		bytes.NewBufferString("{\"action\":\"addNote\",\"params\":{\"note\":{\"deckName\":\"A\",\"fields\":{\"F1\":\"の・の\",\"F2\":\"Field2\"},\"modelName\":\"B\",\"options\":{\"allowDuplicates\":false},\"tags\":[\"T1\",\"T2\"]}},\"version\":6}"),
 	)
 }
+
+func Test_AddCardWithError_RetriesToAddCard(t *testing.T) {
+
+}

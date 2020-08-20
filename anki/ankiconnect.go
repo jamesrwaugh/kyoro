@@ -33,22 +33,25 @@ func NewAnkiConnect(client HTTPClient, host string, port int64) AnkiService {
 	return a
 }
 
-func (ac AnkiConnect) responseHasError(resp *http.Response, err error) bool {
-	// Fail early if the requst itself failed.
-	if err != nil {
-		log.Fatal("Recieved network error: ", err.Error())
-		return true
-	}
+func (ac AnkiConnect) getResponseError(resp *http.Response) (hasError bool, errorMessage string) {
 	// Check AnkiConnect's response for the "error" property.
 	// On error, it is a string, and null otherwise.
 	bodyBytes, _ := ioutil.ReadAll(resp.Body)
 	var ankiConnectResponse map[string]interface{}
 	json.Unmarshal(bodyBytes, &ankiConnectResponse)
 	if errorString, ok := ankiConnectResponse["error"].(string); ok {
-		log.Println("Recieved AnkiConnect error: ", errorString)
-		return true
+		return true, errorString
 	}
-	return false
+	return false, ""
+}
+
+func (ac AnkiConnect) responseHasError(resp *http.Response, err error) (hasError bool, errorMessage string) {
+	// Fail early if the requst itself failed.
+	if err != nil {
+		return true, err.Error()
+	}
+	hasError, errorMessage = ac.getResponseError(resp)
+	return
 }
 
 // GetEndpoint returns the endpoint of where AnkiConnect is connecting a a display-full string
@@ -107,9 +110,13 @@ func (ac AnkiConnect) getAnkiConnectJSONResponse(request map[string]interface{},
 	for i := 0; i < retryCount; i++ {
 		resp, err := ac.client.Post(ac.GetEndpoint(), "application/json", bytes.NewBuffer(requestString))
 		defer resp.Body.Close()
-		if ac.responseHasError(resp, err) {
+		if hasError, errorMessage := ac.responseHasError(resp, err); hasError {
+			if errorMessage == "cannot create note because it is a duplicate" {
+				log.Println(errorMessage)
+				break
+			}
 			if i < retryCount {
-				log.Println("Received Error, Retying: ")
+				log.Println("Received Error, Retying: " + errorMessage)
 				time.Sleep(500)
 				continue
 			} else {
