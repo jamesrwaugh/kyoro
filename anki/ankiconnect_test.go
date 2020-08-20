@@ -42,11 +42,6 @@ func Test_IsConnected_WhenRequestReturnsError_ReturnsFalse(t *testing.T) {
 	assert.False(t, anki.IsConnected())
 }
 
-func Test_MaxSentencesPerCard_Is_1(t *testing.T) {
-	anki, _ := makeAnkiConnectTestObjects()
-	assert.Equal(t, 1, anki.MaxSentencesPerCard())
-}
-
 func Test_AddCard_WithValidCardAndNoError_MakesCorrectPostResponse(t *testing.T) {
 	anki, mhc := makeAnkiConnectTestObjects()
 	mhc.On("Post", mock.Anything, mock.Anything, mock.Anything).Return(makeResponse(200), nil)
