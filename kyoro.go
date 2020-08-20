@@ -118,9 +118,8 @@ func (kyoro KyoroProduction) makeKeywordAnkiCard(
 	}
 }
 
-// TODO: This should be abstracted out into different implementations, like a console
-// verifier, a mock one, GUI, Zenity, others.
-// The tests currently cannoy run becasue of this.
+// Acquire sentences and have the user confirm each. Return the ones that were accetped.
+// These accepted sentences should be added to Anki.
 func (kyoro KyoroProduction) getUserConfirmedSentences(
 	options Options,
 	sentenceSource acquisition.SentenceRetriever,
