@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"testing"
 
@@ -13,7 +14,8 @@ import (
 
 func makeAnkiConnectTestObjects() (service AnkiService, client *MockHTTPClient) {
 	client = &MockHTTPClient{}
-	service = NewAnkiConnect(client, "の.の", 50)
+	logger := log.New(silentWriter{}, "", log.LstdFlags)
+	service = NewAnkiConnect(client, "の.の", 50, logger)
 	return
 }
 

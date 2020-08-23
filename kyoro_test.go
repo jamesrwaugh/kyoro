@@ -24,13 +24,6 @@ type KyoroTestEnvironment struct {
 	Verifier    verification.SentenceVerifier
 }
 
-type SilentWriter struct {
-}
-
-func (l SilentWriter) Write(p []byte) (n int, err error) {
-	return
-}
-
 func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 	return e.Kyoro.Run(*options)
 }
@@ -38,7 +31,7 @@ func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	//
 	mrc := &acquisition.MockResourceClient{}
-	logger := log.New(SilentWriter{}, "", log.LstdFlags)
+	logger := log.New(silentWriter{}, "", log.LstdFlags)
 	jisho := acquisition.NewJishoSentenceretriever(mrc, logger)
 	jmdict := acquisition.NewJdictMeaningRetriever(mrc, logger)
 	mvf := &verification.MockSentenceVerifier{}

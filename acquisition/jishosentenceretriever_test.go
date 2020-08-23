@@ -2,7 +2,10 @@ package acquisition
 
 import (
 	"fmt"
+	"log"
 	"testing"
+
+	"github.com/jamesrwaugh/kyoro/testutils"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -85,7 +88,8 @@ func makeJishoURL(term string, pageNumber int) string {
 
 func newJishoTestObjects() (jisho *JishoSentenceretriever, mrc *MockResourceClient) {
 	mrc = &MockResourceClient{}
-	jisho = NewJishoSentenceretriever(mrc)
+	logger := log.New(testutils.SilentWriter{}, "", 0)
+	jisho = NewJishoSentenceretriever(mrc, logger)
 	return
 }
 

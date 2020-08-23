@@ -1,8 +1,10 @@
 package acquisition
 
 import (
+	"log"
 	"testing"
 
+	"github.com/jamesrwaugh/kyoro/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,7 +58,8 @@ func TestGetMeaningforKanji(t *testing.T) {
 	mrc.On("Get", "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ%E5%85%88%E7%94%9F").Return(先生テスト)
 	mrc.On("Get", "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ%E3%81%AA%E3%81%97").Return("")
 	mrc.On("Get", "http://nihongo.monash.edu/cgi-bin/wwwjdic?1ZUJ%E3%81%AA%E3%81%84").Return(文がないテスト)
-	jdict := NewJdictMeaningRetriever(&mrc)
+	logger := log.New(testutils.SilentWriter{}, "", 0)
+	jdict := NewJdictMeaningRetriever(&mrc, logger)
 
 	for _, c := range cases {
 		result := jdict.GetMeaningforKanji(c.in)
