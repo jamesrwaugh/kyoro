@@ -40,11 +40,11 @@ func (rc productionResourceClient) Get(address string) (string, error) {
 func runKyoro(options Options) bool {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 	resourceClient := productionResourceClient{}
-	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765, *logger)
-	sentences := acquisition.NewJibikiSentenceretriever(resourceClient, *logger)
-	meaning := acquisition.NewJdictMeaningRetriever(resourceClient, *logger)
+	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765, logger)
+	sentences := acquisition.NewJibikiSentenceretriever(resourceClient, logger)
+	meaning := acquisition.NewJdictMeaningRetriever(resourceClient, logger)
 	verifier := verification.NewConsoleSentenceVerifier()
-	mao := KyoroProduction{anki, sentences, meaning, verifier, *logger}
+	mao := KyoroProduction{anki, sentences, meaning, verifier, logger}
 	return mao.Run(options)
 }
 

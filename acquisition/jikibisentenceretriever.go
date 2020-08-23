@@ -9,7 +9,7 @@ import (
 
 // NewJibikiSentenceretriever creates a new JibikiSentenceretriever
 // To retrieve a sentence from jibiki.app
-func NewJibikiSentenceretriever(c ResourceClient, logger log.Logger) *JibikiSentenceretriever {
+func NewJibikiSentenceretriever(c ResourceClient, logger *log.Logger) *JibikiSentenceretriever {
 	j := JibikiSentenceretriever{c, logger}
 	return &j
 }
@@ -17,7 +17,7 @@ func NewJibikiSentenceretriever(c ResourceClient, logger log.Logger) *JibikiSent
 // JibikiSentenceretriever retrieves a sentence from jibiki.app
 type JibikiSentenceretriever struct {
 	client ResourceClient
-	logger log.Logger
+	logger *log.Logger
 }
 
 // JibikiRestSentenceResponse is a return type from the Jibiki API.

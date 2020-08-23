@@ -11,7 +11,7 @@ import (
 
 // NewJdictMeaningRetriever creates a new JdictMeaningRetriever
 // To retrieve a word's meaning from JDict
-func NewJdictMeaningRetriever(c ResourceClient, logger log.Logger) *JdictMeaningRetriever {
+func NewJdictMeaningRetriever(c ResourceClient, logger *log.Logger) *JdictMeaningRetriever {
 	r := JdictMeaningRetriever{c, logger}
 	return &r
 }
@@ -19,7 +19,7 @@ func NewJdictMeaningRetriever(c ResourceClient, logger log.Logger) *JdictMeaning
 // JdictMeaningRetriever retrieves a word's meaning from JDict
 type JdictMeaningRetriever struct {
 	client ResourceClient
-	logger log.Logger
+	logger *log.Logger
 }
 
 func (dict JdictMeaningRetriever) getJDicResults(word string) []string {

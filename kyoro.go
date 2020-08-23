@@ -18,7 +18,7 @@ type KyoroProduction struct {
 	sentenceSource acquisition.SentenceRetriever
 	meaningSource  acquisition.MeaningRetriever
 	verifier       verification.SentenceVerifier
-	logger         log.Logger
+	logger         *log.Logger
 }
 
 // NewKyoro creates a new Kyoro object.
@@ -27,7 +27,7 @@ func NewKyoro(
 	sentenceSource acquisition.SentenceRetriever,
 	meaningSource acquisition.MeaningRetriever,
 	verifier verification.SentenceVerifier,
-	logger log.Logger) (instance Kyoro) {
+	logger *log.Logger) (instance Kyoro) {
 	return &KyoroProduction{ankiService, sentenceSource, meaningSource, verifier, logger}
 }
 

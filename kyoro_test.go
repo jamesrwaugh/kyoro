@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
@@ -25,6 +24,13 @@ type KyoroTestEnvironment struct {
 	Verifier    verification.SentenceVerifier
 }
 
+type SilentWriter struct {
+}
+
+func (l SilentWriter) Write(p []byte) (n int, err error) {
+	return
+}
+
 func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 	return e.Kyoro.Run(*options)
 }
@@ -32,17 +38,17 @@ func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	//
 	mrc := &acquisition.MockResourceClient{}
-	logger := log.New(os.Stderr, "", log.LstdFlags)
-	jisho := acquisition.NewJishoSentenceretriever(mrc, *logger)
-	jmdict := acquisition.NewJdictMeaningRetriever(mrc, *logger)
+	logger := log.New(SilentWriter{}, "", log.LstdFlags)
+	jisho := acquisition.NewJishoSentenceretriever(mrc, logger)
+	jmdict := acquisition.NewJdictMeaningRetriever(mrc, logger)
 	mvf := &verification.MockSentenceVerifier{}
 
 	//
 	ankiConnectClient := &anki.MockHTTPClient{}
-	ankiConnect := anki.NewAnkiConnect(ankiConnectClient, "の.の", 50, *logger)
+	ankiConnect := anki.NewAnkiConnect(ankiConnectClient, "の.の", 50, logger)
 
 	return &KyoroTestEnvironment{
-		Kyoro:       NewKyoro(ankiConnect, jisho, jmdict, mvf, *logger),
+		Kyoro:       NewKyoro(ankiConnect, jisho, jmdict, mvf, logger),
 		AnkiClient:  ankiConnectClient,
 		Anki:        ankiConnect,
 		AcquiMockRC: mrc,

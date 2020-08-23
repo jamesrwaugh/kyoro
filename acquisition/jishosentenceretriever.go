@@ -10,7 +10,7 @@ import (
 
 // NewJishoSentenceretriever creates a new JishoSentenceretriever
 // To retrieve a sentence from Jisho.org
-func NewJishoSentenceretriever(c ResourceClient, logger log.Logger) *JishoSentenceretriever {
+func NewJishoSentenceretriever(c ResourceClient, logger *log.Logger) *JishoSentenceretriever {
 	j := JishoSentenceretriever{c, logger}
 	return &j
 }
@@ -18,7 +18,7 @@ func NewJishoSentenceretriever(c ResourceClient, logger log.Logger) *JishoSenten
 // JishoSentenceretriever retrieves a sentence from Jisho.org
 type JishoSentenceretriever struct {
 	client ResourceClient
-	logger log.Logger
+	logger *log.Logger
 }
 
 func (jisho JishoSentenceretriever) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (japanese string, reading string, kaniReadings []string) {

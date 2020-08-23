@@ -25,11 +25,11 @@ type AnkiConnect struct {
 	client   HTTPClient
 	hostname string
 	port     int64
-	logger   log.Logger
+	logger   *log.Logger
 }
 
 // NewAnkiConnect does what it says
-func NewAnkiConnect(client HTTPClient, host string, port int64, logger log.Logger) AnkiService {
+func NewAnkiConnect(client HTTPClient, host string, port int64, logger *log.Logger) AnkiService {
 	a := &AnkiConnect{client, host, port, logger}
 	return a
 }
