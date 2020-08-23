@@ -10,14 +10,15 @@ import (
 
 // NewJishoSentenceretriever creates a new JishoSentenceretriever
 // To retrieve a sentence from Jisho.org
-func NewJishoSentenceretriever(c ResourceClient) *JishoSentenceretriever {
-	j := JishoSentenceretriever{c}
+func NewJishoSentenceretriever(c ResourceClient, logger log.Logger) *JishoSentenceretriever {
+	j := JishoSentenceretriever{c, logger}
 	return &j
 }
 
 // JishoSentenceretriever retrieves a sentence from Jisho.org
 type JishoSentenceretriever struct {
 	client ResourceClient
+	logger log.Logger
 }
 
 func (jisho JishoSentenceretriever) buildJapaneseAndReadingStrings(japaneseSentence soup.Root) (japanese string, reading string, kaniReadings []string) {
@@ -72,7 +73,7 @@ func (jisho JishoSentenceretriever) GetSentencesforKanji(kanji string, maxSenten
 	var sentences []Translation
 	for pageNumber := 1; len(sentences) < maxSentences; pageNumber++ {
 		url := fmt.Sprintf("https://jisho.org/search/%s %%23sentences?page=%d", kanji, pageNumber)
-		log.Println("[Jisho] Looking for sentences on " + url)
+		jisho.logger.Println("[Jisho] Looking for sentences on " + url)
 		resp, _ := jisho.client.Get(url)
 		doc := soup.HTMLParse(resp)
 		foundSentences := doc.FindAll("div", "class", "sentence_content")

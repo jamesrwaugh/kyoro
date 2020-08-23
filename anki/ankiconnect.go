@@ -25,11 +25,12 @@ type AnkiConnect struct {
 	client   HTTPClient
 	hostname string
 	port     int64
+	logger   log.Logger
 }
 
 // NewAnkiConnect does what it says
-func NewAnkiConnect(client HTTPClient, host string, port int64) AnkiService {
-	a := &AnkiConnect{client, host, port}
+func NewAnkiConnect(client HTTPClient, host string, port int64, logger log.Logger) AnkiService {
+	a := &AnkiConnect{client, host, port, logger}
 	return a
 }
 
@@ -112,11 +113,11 @@ func (ac AnkiConnect) getAnkiConnectJSONResponse(request map[string]interface{},
 		defer resp.Body.Close()
 		if hasError, errorMessage := ac.responseHasError(resp, err); hasError {
 			if errorMessage == "cannot create note because it is a duplicate" {
-				log.Println(errorMessage)
+				ac.logger.Println(errorMessage)
 				break
 			}
 			if i < retryCount {
-				log.Println("Received Error, Retying: " + errorMessage)
+				ac.logger.Println("Received Error, Retying: " + errorMessage)
 				time.Sleep(500)
 				continue
 			} else {

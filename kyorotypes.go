@@ -1,11 +1,5 @@
 package main
 
-import (
-	"github.com/jamesrwaugh/kyoro/acquisition"
-	"github.com/jamesrwaugh/kyoro/anki"
-	"github.com/jamesrwaugh/kyoro/verification"
-)
-
 // Options tells Kyoro how to help you.
 type Options struct {
 	// The Japanese input phrase to generate cards for.
@@ -37,15 +31,7 @@ type Options struct {
 	SilentMode bool
 }
 
-// KyoroDependencies is a structure containing all of Kyoro's dependencies.
-type KyoroDependencies struct {
-	anki             *anki.AnkiService
-	sentenceSource   *acquisition.SentenceRetriever
-	meaningSource    *acquisition.MeaningRetriever
-	sentenceVerifier *verification.SentenceVerifier
-}
-
 // Kyoro is the driver.
 type Kyoro interface {
-	Kyoro(options Options, anki anki.AnkiService, sentenceSource acquisition.SentenceRetriever, meaningSource acquisition.MeaningRetriever, verifier verification.SentenceVerifier) bool
+	Run(options Options) bool
 }

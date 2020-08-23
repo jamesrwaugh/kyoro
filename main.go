@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"sort"
@@ -37,12 +38,14 @@ func (rc productionResourceClient) Get(address string) (string, error) {
 }
 
 func runKyoro(options Options) bool {
-	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765)
-	sentences := acquisition.NewJibikiSentenceretriever(productionResourceClient{})
-	meaning := acquisition.NewJdictMeaningRetriever(productionResourceClient{})
+	logger := log.New(os.Stderr, "", log.LstdFlags)
+	resourceClient := productionResourceClient{}
+	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765, *logger)
+	sentences := acquisition.NewJibikiSentenceretriever(resourceClient, *logger)
+	meaning := acquisition.NewJdictMeaningRetriever(resourceClient, *logger)
 	verifier := verification.NewConsoleSentenceVerifier()
-	mao := KyoroProduction{}
-	return mao.Kyoro(options, anki, sentences, meaning, verifier)
+	mao := KyoroProduction{anki, sentences, meaning, verifier, *logger}
+	return mao.Run(options)
 }
 
 func main() {

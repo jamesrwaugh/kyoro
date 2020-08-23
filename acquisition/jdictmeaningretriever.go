@@ -11,14 +11,15 @@ import (
 
 // NewJdictMeaningRetriever creates a new JdictMeaningRetriever
 // To retrieve a word's meaning from JDict
-func NewJdictMeaningRetriever(c ResourceClient) *JdictMeaningRetriever {
-	r := JdictMeaningRetriever{c}
+func NewJdictMeaningRetriever(c ResourceClient, logger log.Logger) *JdictMeaningRetriever {
+	r := JdictMeaningRetriever{c, logger}
 	return &r
 }
 
 // JdictMeaningRetriever retrieves a word's meaning from JDict
 type JdictMeaningRetriever struct {
 	client ResourceClient
+	logger log.Logger
 }
 
 func (dict JdictMeaningRetriever) getJDicResults(word string) []string {
@@ -34,7 +35,7 @@ func (dict JdictMeaningRetriever) getJDicResults(word string) []string {
 	doc := soup.HTMLParse(html)
 	results := doc.Find("pre")
 	if results.Error != nil {
-		log.Println("Could not find WWWJDIC entries for \"", word, "\"")
+		dict.logger.Println("Could not find WWWJDIC entries for \"", word, "\"")
 		return []string{}
 	}
 	resultLines := strings.Split(results.Text(), "\n")
@@ -48,14 +49,14 @@ func (dict JdictMeaningRetriever) parseDictionaryEntries(word string, entries []
 		if len(matches) < 5 || matches[1] != word {
 			continue
 		}
-		log.Println("WWWJDIC: Found match for \"", word, "\" as ", entry)
+		dict.logger.Println("WWWJDIC: Found match for \"", word, "\" as ", entry)
 		return Translation{
 			Japanese: matches[1],
 			Reading:  matches[2],
 			English:  matches[4],
 		}
 	}
-	log.Println("Could not find a WWWJDIC entry for ", word)
+	dict.logger.Println("Could not find a WWWJDIC entry for ", word)
 	return Translation{}
 }
 

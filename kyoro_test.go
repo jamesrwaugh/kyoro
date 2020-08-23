@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
@@ -24,28 +26,23 @@ type KyoroTestEnvironment struct {
 }
 
 func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
-	return e.Kyoro.Kyoro(
-		*options,
-		e.Anki,
-		e.Sentences,
-		e.Meanings,
-		e.Verifier,
-	)
+	return e.Kyoro.Run(*options)
 }
 
 func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	//
 	mrc := &acquisition.MockResourceClient{}
-	jisho := acquisition.NewJishoSentenceretriever(mrc)
-	jmdict := acquisition.NewJdictMeaningRetriever(mrc)
+	logger := log.New(os.Stderr, "", log.LstdFlags)
+	jisho := acquisition.NewJishoSentenceretriever(mrc, *logger)
+	jmdict := acquisition.NewJdictMeaningRetriever(mrc, *logger)
 	mvf := &verification.MockSentenceVerifier{}
 
 	//
 	ankiConnectClient := &anki.MockHTTPClient{}
-	ankiConnect := anki.NewAnkiConnect(ankiConnectClient, "の.の", 50)
+	ankiConnect := anki.NewAnkiConnect(ankiConnectClient, "の.の", 50, *logger)
 
 	return &KyoroTestEnvironment{
-		Kyoro:       NewKyoro(),
+		Kyoro:       NewKyoro(ankiConnect, jisho, jmdict, mvf, *logger),
 		AnkiClient:  ankiConnectClient,
 		Anki:        ankiConnect,
 		AcquiMockRC: mrc,

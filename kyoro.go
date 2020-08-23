@@ -14,11 +14,21 @@ import (
 
 // KyoroProduction is the actual real thing.
 type KyoroProduction struct {
+	ankiService    anki.AnkiService
+	sentenceSource acquisition.SentenceRetriever
+	meaningSource  acquisition.MeaningRetriever
+	verifier       verification.SentenceVerifier
+	logger         log.Logger
 }
 
 // NewKyoro creates a new Kyoro object.
-func NewKyoro() (instance Kyoro) {
-	return &KyoroProduction{}
+func NewKyoro(
+	ankiService anki.AnkiService,
+	sentenceSource acquisition.SentenceRetriever,
+	meaningSource acquisition.MeaningRetriever,
+	verifier verification.SentenceVerifier,
+	logger log.Logger) (instance Kyoro) {
+	return &KyoroProduction{ankiService, sentenceSource, meaningSource, verifier, logger}
 }
 
 func (kyoro KyoroProduction) makeSentenceAnkiCard(
@@ -120,11 +130,7 @@ func (kyoro KyoroProduction) makeKeywordAnkiCard(
 
 // Acquire sentences and have the user confirm each. Return the ones that were accetped.
 // These accepted sentences should be added to Anki.
-func (kyoro KyoroProduction) getUserConfirmedSentences(
-	options Options,
-	sentenceSource acquisition.SentenceRetriever,
-	verifier verification.SentenceVerifier,
-) []acquisition.Translation {
+func (kyoro KyoroProduction) getUserConfirmedSentences(options Options) []acquisition.Translation {
 	var acceptedSentences []acquisition.Translation
 	for len(acceptedSentences) < options.MaxSentences {
 		// TODO: Fix Infinite loop when there are sentences, but the user has rejected
@@ -132,12 +138,12 @@ func (kyoro KyoroProduction) getUserConfirmedSentences(
 		// the above condition will also never be true.
 		// To solve this and other issues, it would be best to have a "start from" index
 		// in the sentence interface.
-		sentences := sentenceSource.GetSentencesforKanji(options.InputPhrase, 10*options.MaxSentences)
+		sentences := kyoro.sentenceSource.GetSentencesforKanji(options.InputPhrase, 10*options.MaxSentences)
 		if len(sentences) == 0 {
 			break
 		}
 		for index, sentence := range sentences {
-			confirmed := verifier.UserConfirmSentence(&verification.SentenceVerificationInfo{
+			confirmed := kyoro.verifier.UserConfirmSentence(&verification.SentenceVerificationInfo{
 				AcceptedSentences: acceptedSentences,
 				Sentence:          sentence,
 				SentenceIndex:     index,
@@ -153,20 +159,14 @@ func (kyoro KyoroProduction) getUserConfirmedSentences(
 	return acceptedSentences
 }
 
-// Kyoro runs the main procedure of Kyoro from the command line,
+// Run runs the main procedure of Kyoro from the command line,
 // and adds cards accordingly.
-func (kyoro KyoroProduction) Kyoro(
-	options Options,
-	ankiService anki.AnkiService,
-	sentenceSource acquisition.SentenceRetriever,
-	meaningSource acquisition.MeaningRetriever,
-	verifier verification.SentenceVerifier,
-) bool {
-	if !ankiService.IsConnected() {
-		log.Println("Could not connect to Anki. Failing.")
+func (kyoro KyoroProduction) Run(options Options) bool {
+	if !kyoro.ankiService.IsConnected() {
+		kyoro.logger.Println("Could not connect to Anki. Failing.")
 		return false
 	}
-	sentences := kyoro.getUserConfirmedSentences(options, sentenceSource, verifier)
+	sentences := kyoro.getUserConfirmedSentences(options)
 	if options.SentencesOnFrontMode {
 		for _, sentence := range sentences {
 			var card anki.AnkiCard
@@ -179,12 +179,12 @@ func (kyoro KyoroProduction) Kyoro(
 				card = kyoro.makeSentenceAnkiCard(sentence, options)
 			}
 
-			ankiService.AddCard(card)
+			kyoro.ankiService.AddCard(card)
 		}
 	} else {
-		meaning := meaningSource.GetMeaningforKanji(options.InputPhrase)
+		meaning := kyoro.meaningSource.GetMeaningforKanji(options.InputPhrase)
 		card := kyoro.makeKeywordAnkiCard(options, meaning, sentences)
-		ankiService.AddCard(card)
+		kyoro.ankiService.AddCard(card)
 	}
 
 	return true

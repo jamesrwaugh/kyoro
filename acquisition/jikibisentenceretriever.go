@@ -9,14 +9,15 @@ import (
 
 // NewJibikiSentenceretriever creates a new JibikiSentenceretriever
 // To retrieve a sentence from jibiki.app
-func NewJibikiSentenceretriever(c ResourceClient) *JibikiSentenceretriever {
-	j := JibikiSentenceretriever{c}
+func NewJibikiSentenceretriever(c ResourceClient, logger log.Logger) *JibikiSentenceretriever {
+	j := JibikiSentenceretriever{c, logger}
 	return &j
 }
 
 // JibikiSentenceretriever retrieves a sentence from jibiki.app
 type JibikiSentenceretriever struct {
 	client ResourceClient
+	logger log.Logger
 }
 
 // JibikiRestSentenceResponse is a return type from the Jibiki API.
@@ -36,7 +37,7 @@ func (jibiki JibikiSentenceretriever) GetSentencesforKanji(kanji string, maxSent
 	var sentences []Translation
 	escapedQuery := url.QueryEscape(kanji)
 	url := fmt.Sprintf("https://api.jibiki.app/sentences?query=%s", escapedQuery)
-	log.Println("[Jibiki] Looking for sentences on " + url)
+	jibiki.logger.Println("[Jibiki] Looking for sentences on " + url)
 	resp, _ := jibiki.client.Get(url)
 
 	var jibikiResponse JibikiRestSentenceResponse
