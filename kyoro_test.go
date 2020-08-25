@@ -9,6 +9,7 @@ import (
 
 	"github.com/jamesrwaugh/kyoro/acquisition"
 	"github.com/jamesrwaugh/kyoro/anki"
+	"github.com/jamesrwaugh/kyoro/testutils"
 	"github.com/jamesrwaugh/kyoro/verification"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,7 +32,7 @@ func (e *KyoroTestEnvironment) RunKyoro(options *Options) bool {
 func makeKyoroTestEnvironment() (env *KyoroTestEnvironment) {
 	//
 	mrc := &acquisition.MockResourceClient{}
-	logger := log.New(silentWriter{}, "", log.LstdFlags)
+	logger := log.New(testutils.SilentWriter{}, "", log.LstdFlags)
 	jisho := acquisition.NewJishoSentenceretriever(mrc, logger)
 	jmdict := acquisition.NewJdictMeaningRetriever(mrc, logger)
 	mvf := &verification.MockSentenceVerifier{}

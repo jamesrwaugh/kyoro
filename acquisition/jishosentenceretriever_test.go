@@ -116,11 +116,11 @@ func Test_GetSentencesforKanji_ParsesHTMLCorrectly(t *testing.T) {
 	assert.Equal(2, len(results))
 	assert.Equal("Mum said the same thing. But, so what? It's got nothing to do with me.", results[0].English)
 	assert.Equal("母ちゃんも同じ事", results[0].Japanese)
-	assert.Equal("母ちゃん「かあ」も同じ「おな」事「こと」", results[0].Reading)
+	assert.Equal("母ちゃん[かあ] も同じ[おな] 事[こと]", results[0].Reading)
 	assert.Equal(3, len(results[0].KanjiReadings))
 	assert.Equal("I also really had the feeling of having had a relaxed day with my family for the first time in a long while.", results[1].English)
 	assert.Equal("私も、ほんとに。", results[1].Japanese)
-	assert.Equal("私「わたし」も、ほんとに。", results[1].Reading)
+	assert.Equal("私[わたし] も、ほんとに。", results[1].Reading)
 	assert.Equal(1, len(results[1].KanjiReadings))
 }
 

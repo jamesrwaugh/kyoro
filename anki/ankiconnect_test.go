@@ -8,13 +8,14 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/jamesrwaugh/kyoro/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
 func makeAnkiConnectTestObjects() (service AnkiService, client *MockHTTPClient) {
 	client = &MockHTTPClient{}
-	logger := log.New(silentWriter{}, "", log.LstdFlags)
+	logger := log.New(testutils.SilentWriter{}, "", log.LstdFlags)
 	service = NewAnkiConnect(client, "の.の", 50, logger)
 	return
 }

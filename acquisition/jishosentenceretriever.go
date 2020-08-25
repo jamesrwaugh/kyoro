@@ -30,7 +30,7 @@ func (jisho JishoSentenceretriever) buildJapaneseAndReadingStrings(japaneseSente
 			reading += elementText
 			furigana := element.Find("span", "class", "furigana")
 			if furigana.Error == nil {
-				quotedFurigana := " [" + furigana.Text() + "]"
+				quotedFurigana := "[" + furigana.Text() + "] "
 				reading += quotedFurigana
 				kaniReadings = append(kaniReadings, elementText+quotedFurigana)
 			}
@@ -41,14 +41,8 @@ func (jisho JishoSentenceretriever) buildJapaneseAndReadingStrings(japaneseSente
 			reading += nodeValue
 		}
 	}
+	reading = strings.TrimSpace(reading)
 	return
-}
-
-func lastKanjiIndex(japanese string) int {
-	var isKanji = func(r rune) bool {
-		return '\u4E00' > r && r < '\u9FAF'
-	}
-	return strings.LastIndexFunc(japanese, isKanji)
 }
 
 func (jisho JishoSentenceretriever) addSentencesFromPage(foundSentences []soup.Root, sentences *[]Translation, maxSentences int) {
