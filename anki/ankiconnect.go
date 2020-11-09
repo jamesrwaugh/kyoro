@@ -75,7 +75,7 @@ func (ac AnkiConnect) HasMiaCardModel() bool {
 	}
 	resp, _ := ac.getAnkiConnectJSONResponse(request, 3)
 	modelNames, _ := resp["result"].([]string)
-	return contains(modelNames, "MIA Japanese")
+	return contains(modelNames, "Migaku Japanese")
 }
 
 // AddCard will add the given card to Anki

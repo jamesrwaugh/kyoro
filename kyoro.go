@@ -65,7 +65,7 @@ func (kyoro KyoroProduction) makeMiaSentenceAnkiCard(sentence acquisition.Transl
 	}
 	return anki.AnkiCard{
 		DeckName:  options.DeckName,
-		ModelName: "MIA Japanese",
+		ModelName: "Migaku Japanese",
 		Fields:    cardFields,
 		Tags: []string{
 			"kyoro",
@@ -173,7 +173,7 @@ func (kyoro KyoroProduction) Run(options Options) bool {
 			// TODO: This should be handled elsewhere
 			// - Default the model name to MIA?
 			// - Move this to "makeSentenceAnkiCard"?
-			if options.ModelName == "MIA Japanese" {
+			if options.ModelName == "Migaku Japanese" {
 				card = kyoro.makeMiaSentenceAnkiCard(sentence, options)
 			} else {
 				card = kyoro.makeSentenceAnkiCard(sentence, options)
