@@ -41,8 +41,8 @@ func runKyoro(options Options) bool {
 	logger := log.New(os.Stderr, "", log.LstdFlags)
 	resourceClient := productionResourceClient{}
 	anki := anki.NewAnkiConnect(http.DefaultClient, "http://localhost", 8765, logger)
-	sentences := acquisition.NewJibikiSentenceretriever(resourceClient, logger)
-	meaning := acquisition.NewJdictMeaningRetriever(resourceClient, logger)
+	meaning := acquisition.NewShinMeiMeaningRetriever(resourceClient, logger)
+	sentences := acquisition.NewJibikiSentenceretriever(resourceClient, meaning, logger)
 	verifier := verification.NewConsoleSentenceVerifier()
 	mao := KyoroProduction{anki, sentences, meaning, verifier, logger}
 	return mao.Run(options)

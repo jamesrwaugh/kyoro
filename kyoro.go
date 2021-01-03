@@ -73,6 +73,27 @@ func (kyoro KyoroProduction) makeMiaSentenceAnkiCard(sentence acquisition.Transl
 	}
 }
 
+// Creates a sentence card for the MIA Sentence Card format.
+// https://massimmersionapproach.com/table-of-contents/anki/mia-japanese-addon/
+func (kyoro KyoroProduction) makeJamesSentenceAnkiCard(sentence acquisition.Translation, options Options) anki.AnkiCard {
+	boldInputPhrase := fmt.Sprintf("<b>%s</b>", options.InputPhrase)
+	boldJapanese := strings.Replace(sentence.Japanese, options.InputPhrase, boldInputPhrase, -1)
+	cardFields := map[string]string{
+		"Expression": boldJapanese,
+		"TargetWord": options.InputPhrase,
+		"Meaning": sentence.Dictionary,
+		"English":    sentence.English,
+	}
+	return anki.AnkiCard{
+		DeckName:  options.DeckName,
+		ModelName: "James Japanese",
+		Fields:    cardFields,
+		Tags: []string{
+			"kyoro",
+		},
+	}
+}
+
 func (kyoro KyoroProduction) generateKeywordBackHTML(
 	sentences []acquisition.Translation,
 	monoligualMode bool,
@@ -173,7 +194,9 @@ func (kyoro KyoroProduction) Run(options Options) bool {
 			// TODO: This should be handled elsewhere
 			// - Default the model name to MIA?
 			// - Move this to "makeSentenceAnkiCard"?
-			if options.ModelName == "Migaku Japanese" {
+			if options.ModelName == "James Japanese" {
+				card = kyoro.makeJamesSentenceAnkiCard(sentence, options)
+			} else if options.ModelName == "Migaku Japanese" {
 				card = kyoro.makeMiaSentenceAnkiCard(sentence, options)
 			} else {
 				card = kyoro.makeSentenceAnkiCard(sentence, options)
