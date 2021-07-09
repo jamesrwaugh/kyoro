@@ -10,7 +10,7 @@ import (
 	"github.com/jamesrwaugh/kyoro/acquisition"
 	"github.com/jamesrwaugh/kyoro/anki"
 	"github.com/jamesrwaugh/kyoro/verification"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func makeKyoroOptions(cli *cli.Context) Options {
@@ -52,7 +52,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "Kyoro, a Japanese sentence card generator"
 	app.Version = "0.6.0"
-	app.Authors = []cli.Author{
+	app.Authors = []*cli.Author{
 		{
 			Name:  "James Waugh",
 			Email: "james.waugh.r@gmail.com",
@@ -69,7 +69,7 @@ sources and importing them into Aki with sentence and vocabulary-focused modes.`
 		&cli.BoolFlag{Name: "monolingual, 1", Usage: "Create Japanese-only cards with no English text"},
 		&cli.BoolFlag{Name: "silent, s", Usage: "Don't create any confirmation dialogs and add cards unequivocally"},
 	}
-	app.Commands = []cli.Command{
+	app.Commands = []*cli.Command{
 		{
 			Name:  "sentences",
 			Usage: "Creates --max-sentences sentence cards, one sentence per card",

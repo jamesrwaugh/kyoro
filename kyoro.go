@@ -81,7 +81,7 @@ func (kyoro KyoroProduction) makeJamesSentenceAnkiCard(sentence acquisition.Tran
 	cardFields := map[string]string{
 		"Expression": boldJapanese,
 		"TargetWord": options.InputPhrase,
-		"Meaning": sentence.Dictionary,
+		"Meaning":    sentence.Dictionary,
 		"English":    sentence.English,
 	}
 	return anki.AnkiCard{

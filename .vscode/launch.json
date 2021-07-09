@@ -9,9 +9,9 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "/home/james/go/src/github.com/jamesrwaugh/kyoro",
+            "program": "/home/james/Desktop/Git/kyoro",
             "env": {},
-            "args": ["-d", "Sentence Cards", "-m", "MIA Japanese", "-n", "2", "-i", "やすい", "sentences"]
+            "args": ["-d", "Sentence Cards", "-m", "James Japanese", "-n", "2", "-i", "やすい", "sentences"]
         }
     ]
 }
